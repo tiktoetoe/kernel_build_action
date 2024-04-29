@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Build Kernel
-      uses: dabao1955/kernel_build_action@main
+      uses: tiktoetoe/kernel_build_action@main
       with:
           kernel-url: https://github.com/PixelExperience-Devices/kernel_samsung_exynos9810
           kernel-dir: msm-4.9.337
