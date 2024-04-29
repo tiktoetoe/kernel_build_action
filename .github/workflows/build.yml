@@ -15,9 +15,9 @@ jobs:
     - name: Build Kernel
       uses: tiktoetoe/kernel_build_action@main
       with:
-          kernel-url: https://github.com/PixelExperience-Devices/kernel_samsung_exynos9810
-          kernel-dir: msm-4.9.337
-          branch: thirteen-plus-wip
+          kernel-url: https://github.com/LineageOS/android_kernel_samsung_exynos9810
+          kernel-dir: msm-4.9
+          branch: lineage-20
           config: exynos9810-starlte_defconfig
           arch: arm64
           aosp-gcc: true
