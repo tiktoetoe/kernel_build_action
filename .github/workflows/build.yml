@@ -15,9 +15,9 @@ jobs:
     - name: Build Kernel
       uses: tiktoetoe/kernel_build_action@main
       with:
-          kernel-url: https://github.com/LineageOS/android_kernel_samsung_exynos9810
+          kernel-url: https://github.com/samsungexynos9810/kernel_samsung_exynos9810-V2
           kernel-dir: msm-4.9
-          branch: lineage-20
+          branch: everest-up1a
           config: exynos9810-starlte_defconfig
           arch: arm64
           aosp-gcc: true
