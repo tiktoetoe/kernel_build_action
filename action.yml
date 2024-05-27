@@ -325,10 +325,10 @@ runs:
          if [ ${{ inputs.apatch }} = true ]; then
              echo "::group:: Initializing Apatch"
              mkdir drivers/apatch
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/Kconfig
+             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/Kconfig -o drivers/apatch/Kconfig
              grep -q "apatch" || sed -i "/endmenu/i\\source \"drivers/apatch/Kconfig\"" drivers/Kconfig
-             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/fix_module.patch
-             git apply fix_module.patch
+             aria2c https://github.com/dabao1955/kernel_build_action/raw/main/apatch/module_fix.patch
+             git apply module_fix.patch
              echo "CONFIG_APATCH_SUPPORT=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
              echo "CONFIG_APATCH_FIX_MODULES=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
              echo "CONFIG_APATCH_CUSTOMS=y" | tee -a arch/${{ inputs.arch }}/configs/${{ inputs.config }} >/dev/null
@@ -389,9 +389,13 @@ runs:
              else
                  make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu- CC=clang ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }}
              fi
-         else
+         else    
              make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.config }}
-             make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }} 
+             if [ ${{ inputs.ccache }} = true ]; then
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- CC="ccache $HOME/gcc-64/bin/aarch64-linux-android-gcc" ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }} 
+             else
+                 make -j$(nproc --all) CROSS_COMPILE=$HOME/gcc-64/bin/aarch64-linux-android- COMPILE_ARM32=$HOME/gcc-32/bin/arm-linux-androideabi- ARCH=${{ inputs.arch }} O=out ${{ inputs.extra-cmd }} 
+             fi
          fi
          echo "::endgroup::"
 
@@ -450,8 +454,8 @@ runs:
             if [ ${{ inputs.release }} = false ]; then
                 cp AnyKernel3 ../../build -r -v
             else
-                zip Anykernel3-flasher.zip Anykernel3/*
-                mv Anykernel3-flasher.zip ../../build -rv
+                zip Anykernel3-flasher.zip AnyKernel3/*
+                mv Anykernel3-flasher.zip ../../build -v
             fi
             echo "::endgroup::"
          fi
